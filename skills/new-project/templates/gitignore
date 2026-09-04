@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+dist/
+build/
+.DS_Store
+
+# Personal, machine-local Claude Code state — never commit
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/worktrees/
