@@ -18,14 +18,31 @@ Shipping: $ARGUMENTS
 failure mode this skill exists to prevent. Do not fix-and-declare in the same
 breath either: fix, re-run, then report what the re-run actually said.
 
+## 0. Pick the tier — a gate with uniform cost on non-uniform work gets skipped
+
+Look at the diff since the last ship (`git diff --stat "$(git log --grep='^ship(' -1 --format=%H)"..HEAD` — falls back to `HEAD~5` if there is no marker yet), then pick:
+
+| Tier | When | Run |
+|---|---|---|
+| **light** | docs, comments, config, or one file with no logic change | tests + push |
+| **standard** | the usual milestone | tests + `/code-review` + push |
+| **full** | touches auth, data model, a security boundary, or anything in `docs/security.md`'s rules | everything, including `/security-review` |
+
+Say which tier you picked and why, in one line. When unsure, go up a tier.
+Skipping `/security-review` on a diff that touches the protected asset is the
+one mistake this table must never produce.
+
 ## 1. Does it still build and pass?
 
 Read `CLAUDE.md` for the project's real commands. Run the test command, then
 the typecheck/build if one exists. If there are no tests yet, say that plainly
 — do not treat "no tests" as "tests passed".
 
-Use `/check` if the output is likely to be long; it runs in a cheap fork and
-returns only failures.
+If the output is likely to be long, use `/check` — but note it is a
+**project-local** skill at `<project>/.claude/skills/check/`, placed there by
+`/new-project`. In a project that did not come from that scaffold it does not
+exist; run the commands directly instead of reporting that the check is
+unavailable.
 
 ## 2. Review the diff for bugs
 
@@ -74,8 +91,13 @@ with the date. Move the next milestone to "next" and state its model and effort.
 
 **Never add a `Co-Authored-By: Claude` trailer.**
 
+Prefix the subject with `ship(<milestone or feature>):` so the next session can
+find this commit mechanically. That marker is the durable baseline — a
+`git rev-parse HEAD` captured in a session is lost on `/clear` and wrong after
+any hand commit, but the marker survives both.
+
 ```bash
-git add -A && git commit -q -m "<what shipped, and what verified it>"
+git add -A && git commit -q -m "ship(M2): <what shipped, and what verified it>"
 git push
 ```
 
