@@ -51,3 +51,5 @@ keep the two in sync automatically, but if Claude Code ever failed to follow the
 link the skills would vanish **silently** — the exact failure mode this setup
 exists to avoid. Copying is duller and cannot fail quietly; `save.sh` is the
 cost of that.
+
+Built by [Melvern Mogens](https://github.com/MelvernMogens).
